@@ -9,6 +9,7 @@ body {
 .btn {
   height: 70px;
   width: 70px;
+  padding: 2px 2px;
   border: 1px solid grey;
   background: #B7D1D4;
   border-radius: 5px;
@@ -27,8 +28,12 @@ body {
 
 .btn.long {
   height: 30px;
-  width: 80px;
+  width: 100px;
   line-height: 50%;
+}
+
+.btn.long.big {
+  height: 40px;
 }
 
 .container {

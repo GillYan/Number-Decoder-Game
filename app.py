@@ -10,18 +10,7 @@ code = ["0"] * 3
 
 @app.route('/')
 def index(name=None):
-    #generate a random 3 digit code without recurrence
-    code[0] = random.randint(1,9)
-    while True:
-        code[1] = random.randint(1,9)
-        if code[1] != code[0]:
-            break
-    while True:
-        code[2] = random.randint(1,9)
-        if code[2] != code[0] and code[2] != code[1]:
-            break
-
-    print(code);
+    
     return render_template('index.html', name=name)
 
 @app.route('/compareCode', methods = ["POST"])
@@ -41,10 +30,24 @@ def check(name=None):
             if str(code[i]) in data:
                 triangle += 1      
 
-
+        #correct the number of triangles
         triangle -= circle
 
-        print(triangle)
-        print(circle)
-
         return jsonify(circle = circle, triangle = triangle)
+
+@app.route('/newCode', methods = ["POST"])
+def generate(name=None):
+    if request.method == "POST":
+        #generate a random 3 digit code without recurrence and print it on the server
+        code[0] = random.randint(1,9)
+        while True:
+            code[1] = random.randint(1,9)
+            if code[1] != code[0]:
+                break
+        while True:
+            code[2] = random.randint(1,9)
+            if code[2] != code[0] and code[2] != code[1]:
+                break
+
+        print(code);
+        return "Successfully generated new code"

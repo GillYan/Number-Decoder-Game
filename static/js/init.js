@@ -1,6 +1,7 @@
 
 var code = ["-", "-", "-"]; //global array to hold the user entered code
 var length = 0;
+var numAttempts = 1;
 
 $(document).ready(function () {
 	console.log("Gillian Sanchez, 1003184");
@@ -11,8 +12,9 @@ $(document).ready(function () {
 		var newNum = num.value;
 		code[length] = newNum;
 		length++;
-
-		//display the user entered code in real time
+        num.disabled = true; //disable the button that was pressed
+		
+        //display the user entered code in real time
 		document.getElementById('code').innerHTML = code[0] + " " + code[1] + " " + code[2];
 
 		if (length == 3) {
@@ -27,8 +29,18 @@ $(document).ready(function () {
             	dataType: 'json',
             	data: JSON.stringify(code),
             	success: function(data){
-                	num.disabled = true; //disable the button that was pressed
-                	document.getElementById('result').innerHTML = "⬤ = " + data.circle + "▲ = " + data.triangle;
+                    //if no numbers were correct display an x else display results
+                	if (data.circle == 0 && data.triangle == 0) {
+                        document.getElementById('result').innerHTML = "✖"
+                    }
+                    else {
+                	   document.getElementById('result').innerHTML = "⬤ = " + data.circle + " ▲ = " + data.triangle;
+                    }
+
+                    //correct code found
+                    if (data.circle == 3) {
+                        document.getElementById('tries').innerHTML = "Succeeded in " + numAttempts + " tries"
+                    }
             	}
         	});
 		}
@@ -59,11 +71,29 @@ function retry() {
 	$(':button').prop('disabled', false); // Enables all buttons
 	code = ["-", "-", "-"];
 	length = 0;
+    numAttempts++;
 	document.getElementById('code').innerHTML = "- - -";
+}
+
+function reset() {
+    numAttempts = 1;
+    retry();
+    document.getElementById('result').innerHTML = "⬤ ▲";
+	//compare the code and return results
+	$.ajax({
+        url: '/newCode',
+        type: 'POST',
+        success: function(data){
+            console.log(data);
+        }
+    });
 }
 
 function disableAll() {
 	$(':button').prop('disabled', true); // Disables all buttons
 	document.getElementById('retry').disabled = false;
+    document.getElementById('reset').disabled = false;
 }
 
+//generate a code on page load
+$("#reset").click()
