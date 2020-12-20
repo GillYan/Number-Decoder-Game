@@ -1,5 +1,5 @@
 
-var code = ["X", "X", "X"]; //global array to hold the user entered code
+var code = ["-", "-", "-"]; //global array to hold the user entered code
 var length = 0;
 
 $(document).ready(function () {
@@ -7,27 +7,31 @@ $(document).ready(function () {
 
 	//function to get the evidences that have been checked
 	function update(num) {
+		//add the selected number to the next position
 		var newNum = num.value;
 		code[length] = newNum;
 		length++;
-		console.log(code);
 
-		$.ajax({
-            url: '/compareCode',
-            type: 'POST',
-            contentType: 'application/json',
-            dataType: 'json',
-            data: JSON.stringify(code),
-            success: function(data){
-                document.getElementById('code').innerHTML = code[0] + " " + code[1] + " " + code[2];
-                num.disabled = true; //disable the button that was pressed
+		//display the user entered code in real time
+		document.getElementById('code').innerHTML = code[0] + " " + code[1] + " " + code[2];
 
-                //if max code length disable all buttons
-                if (length == 3) {
-					disableAll();
-				}
-            }
-        });
+		if (length == 3) {
+			//disable more selection
+			disableAll();
+
+			//compare the code and return results
+			$.ajax({
+            	url: '/compareCode',
+            	type: 'POST',
+            	contentType: 'application/json',
+            	dataType: 'json',
+            	data: JSON.stringify(code),
+            	success: function(data){
+                	num.disabled = true; //disable the button that was pressed
+                	document.getElementById('result').innerHTML = "⬤ = " + data.circle + "▲ = " + data.triangle;
+            	}
+        	});
+		}
 	}
 
 	//event listeners
@@ -53,9 +57,9 @@ $(document).ready(function () {
 
 function retry() {
 	$(':button').prop('disabled', false); // Enables all buttons
-	code = ["X", "X", "X"];
+	code = ["-", "-", "-"];
 	length = 0;
-	document.getElementById('code').innerHTML = "X X X";
+	document.getElementById('code').innerHTML = "- - -";
 }
 
 function disableAll() {

@@ -27,7 +27,24 @@ def index(name=None):
 @app.route('/compareCode', methods = ["POST"])
 def check(name=None):
     if request.method == "POST":
-        data = request.json
-        print(data[2])
-        code = 2
-        return jsonify(code = code)
+        circle = 0;     #circle representing numbers that are correct and in the correct position 
+        triangle = 0;   #triangle representing numbers that are correct but in the wrong position
+        data = request.json     #user entered code
+
+        #get number of digits in correct position        
+        for i in range(len(data)):
+            if data[i] == str(code[i]):
+                circle += 1
+
+        #get number of correct digits
+        for i in range(len(code)):
+            if str(code[i]) in data:
+                triangle += 1      
+
+
+        triangle -= circle
+
+        print(triangle)
+        print(circle)
+
+        return jsonify(circle = circle, triangle = triangle)
